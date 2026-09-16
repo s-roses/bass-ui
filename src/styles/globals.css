@@ -3,30 +3,54 @@
 @tailwind utilities;
 
 /*
-  Placeholder tokens — shadcn's default zinc palette.
-  This is where the real theme goes once it's picked in tweakcn.
+  Theme: B-01
+  Imported from https://tweakcn.com/r/themes/cmu3qb0wu000004jw709zbovv by scripts/import-theme.mjs — re-run that, don't hand-edit.
+
+  tweakcn authors in oklch() for Tailwind v4. These are converted to the bare
+  "H S% L%" triplets v3 needs, because tailwind.config.ts wraps each one as
+  hsl(var(--token)). Hex comments are the resolved colour, for eyeballing.
+
   Light-only on purpose: no .dark block, per the light-background rule.
 */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    --background: 225 50.08% 96.86%; /* #f3f5fb */
+    --foreground: 195 0% 0.39%; /* #010101 */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 195 0% 0.39%; /* #010101 */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 195 0% 0.39%; /* #010101 */
+    --primary: 223.45 69.88% 32.55%; /* #19398d */
+    --primary-foreground: 220 33.06% 96.47%; /* #f3f5f9 */
+    --secondary: 180 0% 3.92%; /* #0a0a0a */
+    --secondary-foreground: 220 42.61% 97.26%; /* #f5f7fb */
+    --muted: 0 0% 96.08%; /* #f5f5f5 */
+    --muted-foreground: 60 0% 27.06%; /* #454545 */
+    --accent: 223.45 69.88% 32.55%; /* #19398d */
+    --accent-foreground: 0 0% 100%; /* #ffffff */
+    --destructive: 340.26 99.99% 30.39%; /* #9b0033 */
+    --destructive-foreground: 0 0% 100%; /* #ffffff */
+    --border: 60 0% 89.02%; /* #e3e3e3 */
+    --input: 0 0% 100%; /* #ffffff */
+    --ring: 223.27 50.99% 40.01%; /* #324f9a */
+    --chart-1: 210.99 98.9% 36.08%; /* #0159b7 */
+    --chart-2: 169.78 82.75% 43.13%; /* #13c9aa */
+    --chart-3: 296.1 66.95% 54.9%; /* #cf3fd9 */
+    --chart-4: 15.93 65.27% 33.93%; /* #8f3c1e */
+    --chart-5: 169.86 76.21% 38.05%; /* #17ab92 */
+    --radius: 0rem;
+    --sidebar: 213 99.95% 11.76%; /* #001b3c */
+    --sidebar-foreground: 232.5 57.42% 97.26%; /* #f4f5fc */
+    --sidebar-primary: 223.45 69.88% 32.55%; /* #19398d */
+    --sidebar-primary-foreground: 0 0% 100%; /* #ffffff */
+    --sidebar-accent: 223.45 69.88% 32.55%; /* #19398d */
+    --sidebar-accent-foreground: 0 0% 100%; /* #ffffff */
+    --sidebar-border: 180 0% 83.13%; /* #d4d4d4 */
+    --sidebar-ring: 223.45 69.88% 32.55%; /* #19398d */
+    --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: Source Code Pro, ui-monospace, monospace;
+    --shadow: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 1px 2px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
   }
 }
 
@@ -36,5 +60,6 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
