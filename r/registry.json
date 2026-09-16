@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "bass-ui",
+  "homepage": "https://github.com/bass/bass-ui",
+  "items": [
+    {
+      "name": "badge",
+      "type": "registry:ui"
+    },
+    {
+      "name": "button",
+      "type": "registry:ui"
+    },
+    {
+      "name": "card",
+      "type": "registry:ui"
+    },
+    {
+      "name": "input",
+      "type": "registry:ui"
+    },
+    {
+      "name": "label",
+      "type": "registry:ui"
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui"
+    },
+    {
+      "name": "theme",
+      "type": "registry:theme"
+    }
+  ]
+}
