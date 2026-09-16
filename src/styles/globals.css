@@ -1,65 +1,134 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
 
 /*
   Theme: B-01
   Imported from https://tweakcn.com/r/themes/cmu3qb0wu000004jw709zbovv by scripts/import-theme.mjs — re-run that, don't hand-edit.
 
-  tweakcn authors in oklch() for Tailwind v4. These are converted to the bare
-  "H S% L%" triplets v3 needs, because tailwind.config.ts wraps each one as
-  hsl(var(--token)). Hex comments are the resolved colour, for eyeballing.
+  Tailwind v4, CSS-first: there is no tailwind.config.ts. Colours stay in the
+  oklch() tweakcn authored them in — wider gamut than hex, and no conversion
+  step to get wrong. Hex comments are sRGB approximations for eyeballing only.
 
   Light-only on purpose: no .dark block, per the light-background rule.
 */
-@layer base {
-  :root {
-    --background: 225 50.08% 96.86%; /* #f3f5fb */
-    --foreground: 195 0% 0.39%; /* #010101 */
-    --card: 0 0% 100%; /* #ffffff */
-    --card-foreground: 195 0% 0.39%; /* #010101 */
-    --popover: 0 0% 100%; /* #ffffff */
-    --popover-foreground: 195 0% 0.39%; /* #010101 */
-    --primary: 223.45 69.88% 32.55%; /* #19398d */
-    --primary-foreground: 220 33.06% 96.47%; /* #f3f5f9 */
-    --secondary: 180 0% 3.92%; /* #0a0a0a */
-    --secondary-foreground: 220 42.61% 97.26%; /* #f5f7fb */
-    --muted: 0 0% 96.08%; /* #f5f5f5 */
-    --muted-foreground: 60 0% 27.06%; /* #454545 */
-    --accent: 223.45 69.88% 32.55%; /* #19398d */
-    --accent-foreground: 0 0% 100%; /* #ffffff */
-    --destructive: 340.26 99.99% 30.39%; /* #9b0033 */
-    --destructive-foreground: 0 0% 100%; /* #ffffff */
-    --border: 60 0% 89.02%; /* #e3e3e3 */
-    --input: 0 0% 100%; /* #ffffff */
-    --ring: 223.27 50.99% 40.01%; /* #324f9a */
-    --chart-1: 210.99 98.9% 36.08%; /* #0159b7 */
-    --chart-2: 169.78 82.75% 43.13%; /* #13c9aa */
-    --chart-3: 296.1 66.95% 54.9%; /* #cf3fd9 */
-    --chart-4: 15.93 65.27% 33.93%; /* #8f3c1e */
-    --chart-5: 169.86 76.21% 38.05%; /* #17ab92 */
-    --radius: 0rem;
-    --sidebar: 213 99.95% 11.76%; /* #001b3c */
-    --sidebar-foreground: 232.5 57.42% 97.26%; /* #f4f5fc */
-    --sidebar-primary: 223.45 69.88% 32.55%; /* #19398d */
-    --sidebar-primary-foreground: 0 0% 100%; /* #ffffff */
-    --sidebar-accent: 223.45 69.88% 32.55%; /* #19398d */
-    --sidebar-accent-foreground: 0 0% 100%; /* #ffffff */
-    --sidebar-border: 180 0% 83.13%; /* #d4d4d4 */
-    --sidebar-ring: 223.45 69.88% 32.55%; /* #19398d */
-    --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
-    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-    --font-mono: Source Code Pro, ui-monospace, monospace;
-    --shadow: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 1px 2px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
-  }
+
+:root {
+  --background: oklch(0.9703 0.0083 271.3290); /* #f3f5fb */
+  --foreground: oklch(0.0672 0 0); /* #010101 */
+  --card: oklch(1.0000 0 0); /* #ffffff */
+  --card-foreground: oklch(0.0672 0 0); /* #010101 */
+  --popover: oklch(1.0000 0 0); /* #ffffff */
+  --popover-foreground: oklch(0.0672 0 0); /* #010101 */
+  --primary: oklch(0.3776 0.1447 264.5076); /* #19398d */
+  --primary-foreground: oklch(0.9698 0.0057 264.5324); /* #f3f5f9 */
+  --secondary: oklch(0.1448 0 0); /* #0a0a0a */
+  --secondary-foreground: oklch(0.9758 0.0057 264.5326); /* #f5f7fb */
+  --muted: oklch(0.9702 0 0); /* #f5f5f5 */
+  --muted-foreground: oklch(0.3904 0 0); /* #454545 */
+  --accent: oklch(0.3776 0.1447 264.5076); /* #19398d */
+  --accent-foreground: oklch(1.0000 0 0); /* #ffffff */
+  --destructive: oklch(0.4386 0.1753 14.1958); /* #9b0033 */
+  --destructive-foreground: oklch(1.0000 0 0); /* #ffffff */
+  --border: oklch(0.9158 0 0); /* #e3e3e3 */
+  --input: oklch(1.0000 0 0); /* #ffffff */
+  --ring: oklch(0.4467 0.1272 265.6182); /* #324f9a */
+  --chart-1: oklch(0.4774 0.1654 256.4882); /* #0159b7 */
+  --chart-2: oklch(0.7479 0.1375 176.0249); /* #13c9aa */
+  --chart-3: oklch(0.6342 0.2449 325.1505); /* #cf3fd9 */
+  --chart-4: oklch(0.4635 0.1206 39.4515); /* #8f3c1e */
+  --chart-5: oklch(0.6645 0.1195 176.9037); /* #17ab92 */
+  --sidebar: oklch(0.2244 0.0722 254.3366); /* #001b3c */
+  --sidebar-foreground: oklch(0.9714 0.0094 279.6908); /* #f4f5fc */
+  --sidebar-primary: oklch(0.3776 0.1447 264.5076); /* #19398d */
+  --sidebar-primary-foreground: oklch(1.0000 0 0); /* #ffffff */
+  --sidebar-accent: oklch(0.3776 0.1447 264.5076); /* #19398d */
+  --sidebar-accent-foreground: oklch(1.0000 0 0); /* #ffffff */
+  --sidebar-border: oklch(0.8699 0 0); /* #d4d4d4 */
+  --sidebar-ring: oklch(0.3776 0.1447 264.5076); /* #19398d */
+  --radius: 0rem;
+}
+
+@theme {
+  --font-sans: Inter, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: Source Code Pro, ui-monospace, monospace;
+  --shadow-color: #1a2137;
+  --shadow-opacity: 0.05;
+  --shadow-blur: 2px;
+  --shadow-spread: 0px;
+  --shadow-offset-x: 0;
+  --shadow-offset-y: 1px;
+  --letter-spacing: 0em;
+  --spacing: 0.24rem;
+  --shadow-2xs: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.03);
+  --shadow-xs: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.03);
+  --shadow-sm: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 1px 2px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
+  --shadow: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 1px 2px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
+  --shadow-md: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 2px 4px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
+  --shadow-lg: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 4px 6px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
+  --shadow-xl: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.05), 0 8px 10px -1px hsl(225.5172 35.8025% 15.8824% / 0.05);
+  --shadow-2xl: 0 1px 2px 0px hsl(225.5172 35.8025% 15.8824% / 0.13);
+  --tracking-normal: 0em;
+  --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+  --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+  --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+  --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+  --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+}
+
+/*
+  @theme inline resolves var() at definition time, which is what lets a token
+  defined in :root above drive a Tailwind utility name below.
+*/
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /*
+    max() guards a zero radius: this theme sets --radius: 0rem, and a bare
+    calc(0rem - 4px) is a negative radius, which invalidates the declaration.
+  */
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans);
   }
 }

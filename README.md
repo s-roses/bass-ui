@@ -1,9 +1,13 @@
 # bass-ui
 
-Personal component library. Radix/shadcn primitives, Tailwind + CSS-variable
-tokens, TanStack Table for grids, lucide-react for icons. Motion is an
-optional peer dependency — nothing here requires it until something actually
-uses it.
+Personal component library. Radix/shadcn primitives, **Tailwind v4**
+(CSS-first — there is no `tailwind.config.ts`), TanStack Table for grids,
+lucide-react for icons. Motion is an optional peer dependency — nothing here
+requires it until something actually uses it.
+
+Theme tokens live in `src/styles/globals.css`: `:root` holds the raw values in
+`oklch()`, `@theme` holds fonts and scale, and `@theme inline` maps each one to
+a Tailwind utility name.
 
 ## Rule
 
@@ -91,8 +95,19 @@ can carry it as a named registry:
 
 then `npx shadcn@latest add @bass-ui/button`.
 
-## After changing the theme
+## Changing the theme
 
-`r/theme.json` is generated from `src/styles/globals.css`. Swap the tokens
-for the real tweakcn theme, then re-run `npm run registry:build` or the
-registry keeps shipping the old placeholder values.
+Themes come from tweakcn, which authors for Tailwind v4 — so colours pass
+through as `oklch()` with no conversion:
+
+```bash
+npm run theme:import -- https://tweakcn.com/themes/<id>
+npm run registry:build
+```
+
+The importer rewrites `src/styles/globals.css` wholesale, so don't hand-edit
+that file — change the theme in tweakcn and re-import. Skipping
+`registry:build` means `r/theme.json` keeps serving the previous theme.
+
+Current theme: **B-01** — navy `#19398d`, square corners (`--radius: 0rem`),
+Inter / Source Code Pro.

@@ -89,26 +89,27 @@ for (const [folder, { type, target }] of Object.entries(FOLDERS)) {
 // nothing. Ships as its own item so an existing project can skip it and keep
 // the theme it already has.
 const css = await readFile(join(ROOT, "src", "styles", "globals.css"), "utf8");
-const rootBlock = css.match(/:root\s*\{([\s\S]*?)\}/);
+
+const vars = (block) =>
+  Object.fromEntries([...block.matchAll(/--([\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
+
+const rootBlock = css.match(/:root\s*\{([\s\S]*?)\n\}/);
+// the bare @theme block — fonts and scale. The @theme *inline* block is skipped
+// on purpose: it only maps names a consuming shadcn project already defines.
+const themeBlock = css.match(/@theme\s*\{([\s\S]*?)\n\}/);
 
 if (rootBlock) {
-  const light = Object.fromEntries(
-    [...rootBlock[1].matchAll(/--([\w-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]),
-  );
+  const item = {
+    $schema: "https://ui.shadcn.com/schema/registry-item.json",
+    name: "theme",
+    type: "registry:theme",
+    cssVars: {
+      ...(themeBlock ? { theme: vars(themeBlock[1]) } : {}),
+      light: vars(rootBlock[1]),
+    },
+  };
 
-  await writeFile(
-    join(OUT, "theme.json"),
-    JSON.stringify(
-      {
-        $schema: "https://ui.shadcn.com/schema/registry-item.json",
-        name: "theme",
-        type: "registry:theme",
-        cssVars: { light },
-      },
-      null,
-      2,
-    ) + "\n",
-  );
+  await writeFile(join(OUT, "theme.json"), JSON.stringify(item, null, 2) + "\n");
   index.push({ name: "theme", type: "registry:theme", folder: "styles", dependencies: [], registryDependencies: [] });
 }
 

@@ -1,9 +1,12 @@
-// Pull a tweakcn theme and write it into src/styles/globals.css as v3-shaped
-// HSL triplets.
+// Pull a tweakcn theme into src/styles/globals.css, Tailwind v4 shape.
 //
 //   npm run theme:import -- https://tweakcn.com/themes/<id>
 //
 // Then `npm run registry:build` so r/theme.json ships the new values.
+//
+// tweakcn authors for v4, so colours pass through as oklch() untouched — no
+// conversion, no gamut clamping, full fidelity. scripts/lib/oklch.mjs is still
+// used, but only to print hex comments so the values are eyeballable in a diff.
 
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -11,13 +14,9 @@ import { convertColor } from "./lib/oklch.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
 
-// v4-only machinery that does nothing on Tailwind v3. --spacing drives v4's
-// dynamic spacing scale; the shadow/tracking vars are consumed by v4's @theme.
-// Carrying them here would just be decoration nothing reads.
-const V4_ONLY = /^(spacing|shadow-|tracking-|letter-spacing|radius-)/;
-
-// Tokens kept as-is: not colors, so no conversion, but still real on v3.
-const PASSTHROUGH = new Set(["radius", "font-sans", "font-serif", "font-mono"]);
+// Keys that are not colours. Everything else becomes a --color-* theme entry.
+// shadow-* values contain hsl() but are shadows, so they match on key, not value.
+const NON_COLOR = /^(radius$|font-|shadow|spacing$|letter-spacing$|tracking-)/;
 
 const input = process.argv[2];
 if (!input) {
@@ -41,59 +40,86 @@ if (!light) {
   process.exit(1);
 }
 
-const lines = [];
-const clampedTokens = [];
-let dropped = 0;
+const colors = [];
+const scale = []; // shadows, spacing, tracking — literals that belong in @theme
+const fonts = [];
+let radius = "0.5rem";
 
 for (const [key, raw] of Object.entries(light)) {
-  if (V4_ONLY.test(key)) {
-    dropped++;
+  if (key === "radius") {
+    radius = raw;
+    continue;
+  }
+  if (key.startsWith("font-")) {
+    fonts.push(`  --${key}: ${raw};`);
+    continue;
+  }
+  if (NON_COLOR.test(key)) {
+    scale.push(`  --${key}: ${raw};`);
     continue;
   }
 
-  if (PASSTHROUGH.has(key)) {
-    lines.push(`    --${key}: ${raw};`);
-    continue;
-  }
-
-  const converted = convertColor(raw);
-  if (!converted) {
-    // already a triplet or some other literal — leave it alone
-    lines.push(`    --${key}: ${raw};`);
-    continue;
-  }
-
-  if (converted.clamped) clampedTokens.push(key);
-  lines.push(`    --${key}: ${converted.triplet}; /* ${converted.hex} */`);
+  // hex comment purely so a diff is readable; oklch is what actually ships
+  const preview = convertColor(raw);
+  colors.push(`  --${key}: ${raw};${preview ? ` /* ${preview.hex} */` : ""}`);
 }
 
-const css = `@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// tracking-* from cssVars.theme depends on --tracking-normal, which lives in light
+for (const [key, raw] of Object.entries(theme.cssVars?.theme ?? {})) {
+  if (key.startsWith("tracking-") && !scale.some((l) => l.includes(`--${key}:`))) {
+    scale.push(`  --${key}: ${raw};`);
+  }
+}
+
+const colorNames = colors.map((l) => l.match(/--([\w-]+):/)[1]);
+
+const css = `@import "tailwindcss";
+@import "tw-animate-css";
 
 /*
   Theme: ${theme.name ?? id}
   Imported from ${url} by scripts/import-theme.mjs — re-run that, don't hand-edit.
 
-  tweakcn authors in oklch() for Tailwind v4. These are converted to the bare
-  "H S% L%" triplets v3 needs, because tailwind.config.ts wraps each one as
-  hsl(var(--token)). Hex comments are the resolved colour, for eyeballing.
+  Tailwind v4, CSS-first: there is no tailwind.config.ts. Colours stay in the
+  oklch() tweakcn authored them in — wider gamut than hex, and no conversion
+  step to get wrong. Hex comments are sRGB approximations for eyeballing only.
 
   Light-only on purpose: no .dark block, per the light-background rule.
 */
-@layer base {
-  :root {
-${lines.join("\n")}
-  }
+
+:root {
+${colors.join("\n")}
+  --radius: ${radius};
+}
+
+@theme {
+${fonts.join("\n")}
+${scale.join("\n")}
+}
+
+/*
+  @theme inline resolves var() at definition time, which is what lets a token
+  defined in :root above drive a Tailwind utility name below.
+*/
+@theme inline {
+${colorNames.map((n) => `  --color-${n}: var(--${n});`).join("\n")}
+
+  /*
+    max() guards a zero radius: this theme sets --radius: ${radius}, and a bare
+    calc(0rem - 4px) is a negative radius, which invalidates the declaration.
+  */
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans);
   }
 }
 `;
@@ -101,8 +127,6 @@ ${lines.join("\n")}
 await writeFile(join(ROOT, "src", "styles", "globals.css"), css);
 
 console.log(`imported "${theme.name ?? id}" -> src/styles/globals.css`);
-console.log(`  ${lines.length} tokens written, ${dropped} v4-only tokens dropped`);
-if (clampedTokens.length) {
-  console.log(`  NOTE: out of sRGB gamut, clamped: ${clampedTokens.join(", ")}`);
-}
+console.log(`  ${colors.length} colours (oklch, unconverted)`);
+console.log(`  ${fonts.length} font tokens, ${scale.length} scale tokens, radius ${radius}`);
 console.log(`  next: npm run registry:build`);
